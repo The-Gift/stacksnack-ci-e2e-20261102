@@ -8,5 +8,6 @@ fs.writeFileSync('public/.well-known/stacksnack-verify.txt',fixture.proof+'\n');
 fs.writeFileSync('public/.well-known/security.txt','Contact: https://github.com/The-Gift/stacksnack-ci-e2e-20261102\nExpires: 2027-01-01T00:00:00Z\n');
 fs.writeFileSync('public/package.json',JSON.stringify({name:'synthetic-ci-fixture',dependencies:{'is-number':'7.0.0'}}));
 fs.writeFileSync('public/api/catalog','[]');
-fs.writeFileSync('public/app.js',`fetch('/api/catalog');${fixture.mode==='leak'?"fetch('/api/sessionTokens');":''}`);
+fs.writeFileSync('public/app.js',"fetch('/api/catalog');fetch('/api/sessionTokens');");
+fs.writeFileSync('public/api/sessionTokens','[]');
 if(fixture.mode==='leak')fs.writeFileSync('public/api/sessionTokens',JSON.stringify({fixtureOnly:true,key:['sk','live','SYNTHETICNOTVALID1234567890'].join('_')}));
