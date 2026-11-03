@@ -4,6 +4,7 @@ const root=path.resolve('public');
 const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json','.txt':'text/plain; charset=utf-8'};
 const server=http.createServer((req,res)=>{
   res.setHeader('cache-control','no-store');
+  res.setHeader('strict-transport-security','max-age=31536000; includeSubDomains');
   res.setHeader('x-content-type-options','nosniff');
   res.setHeader('content-security-policy',"default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'");
   res.setHeader('x-frame-options','DENY');
