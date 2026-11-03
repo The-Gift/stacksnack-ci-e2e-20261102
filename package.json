@@ -1,0 +1,8 @@
+{
+  "name": "stacksnack-disposable-ci-fixture",
+  "private": true,
+  "version": "1.0.0",
+  "engines": {"node": ">=22 <23"},
+  "scripts": {"build": "node build.cjs", "start": "node serve.cjs"},
+  "dependencies": {"jquery": "4.0.0"}
+}
