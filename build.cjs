@@ -1,6 +1,7 @@
 // Synthetic pages only; no application data or working credentials.
 const fs=require('node:fs');
 const fixture=JSON.parse(fs.readFileSync('fixture.json','utf8'));
+if(!['clean','leak','route-a','route-b','ambiguous'].includes(fixture.mode))throw new Error('Unknown synthetic mode');
 if(process.env.FIXTURE_PROOF)fixture.proof=process.env.FIXTURE_PROOF;
 fs.rmSync('public',{recursive:true,force:true});
 fs.mkdirSync('public/.well-known',{recursive:true});fs.mkdirSync('public/api',{recursive:true});
@@ -9,8 +10,10 @@ fs.writeFileSync('public/.well-known/stacksnack-verify.txt',fixture.proof+'\n');
 fs.writeFileSync('public/.well-known/security.txt','Contact: https://github.com/The-Gift/stacksnack-ci-e2e-20261102\nExpires: 2027-01-01T00:00:00Z\n');
 fs.writeFileSync('public/package.json',JSON.stringify({name:'synthetic-ci-fixture',dependencies:{jquery:'4.0.0'}}));
 fs.writeFileSync('public/api/catalog','[]');
-fs.writeFileSync('public/app.js',"fetch('/api/catalog');fetch('/api/sessionTokens');");
+fs.writeFileSync('public/app.js',"fetch('/api/catalog');fetch('/api/sessionTokens');fetch('/api/otherTokens');"+
+  (fixture.mode==='ambiguous'?'\nconst syntheticAccount = '+JSON.stringify({type:'service_account',private_key:'SYNTHETIC_NOT_A_PRIVATE_KEY',client_email:'fixture@example.invalid'})+';':''));
 fs.writeFileSync('public/api/sessionTokens','[]');
-if(fixture.mode==='leak')fs.writeFileSync('public/api/sessionTokens',JSON.stringify({fixtureOnly:true,key:['sk','live','SYNTHETICNOTVALID1234567890'].join('_')}));
+fs.writeFileSync('public/api/otherTokens','[]');
+if(['leak','route-a','route-b'].includes(fixture.mode))fs.writeFileSync('public/api/'+(fixture.mode==='route-b'?'otherTokens':'sessionTokens'),JSON.stringify({fixtureOnly:true,key:['sk','live','SYNTHETICNOTVALID1234567890'].join('_')}));
 
 fs.copyFileSync('node_modules/jquery/dist/jquery.min.js','public/jquery.min.js');
