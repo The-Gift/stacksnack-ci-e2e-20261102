@@ -6,7 +6,7 @@ const server=http.createServer((req,res)=>{
   res.setHeader('cache-control','no-store');
   res.setHeader('strict-transport-security','max-age=31536000; includeSubDomains');
   res.setHeader('x-content-type-options','nosniff');
-  res.setHeader('content-security-policy',"default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'");
+  res.setHeader('content-security-policy',"default-src 'self'; base-uri 'self'; frame-ancestors 'none'; object-src 'none'; script-src-attr 'unsafe-inline'");
   res.setHeader('x-frame-options','DENY');
   res.setHeader('referrer-policy','strict-origin-when-cross-origin');
   res.setHeader('permissions-policy','camera=(), microphone=(), geolocation=()');
