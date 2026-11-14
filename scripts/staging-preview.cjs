@@ -75,10 +75,11 @@ async function main(env = process.env, {fetcher = fetch, pause = sleep} = {}) {
     await status('success', 'The exact staging commit is healthy; starting the automatic release gate.');
     // The existing signed GitHub App webhook owns the blocking gate. Let it finish before the CLI creates a second scan.
     const gateDeadline = Date.now() + 12 * 60000;
+    const expectedGate = crypto.createHash('sha256').update(['9a3d5ef5-84d1-4228-a275-3267581d4c28','1443487174',String(deploy.id),sha].join(':')).digest('hex');
     let gate;
     while (Date.now() < gateDeadline) {
-      const checks = await api(FIXTURE, '/commits/' + sha + '/check-runs?per_page=100', token);
-      gate = checks.check_runs.find(c => c.name === 'StackSnack Release Gate' && c.app?.id === 5535068 &&
+      const checks = await api(FIXTURE, '/commits/' + sha + '/check-runs?filter=all&per_page=100', token);
+      gate = checks.check_runs.find(c => c.name === 'StackSnack Release Gate' && c.app?.id === 5535068 && c.external_id === expectedGate &&
         Date.parse(c.started_at || c.created_at) >= startedAt);
       if (gate?.status === 'completed') break;
       await pause(15000);

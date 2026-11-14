@@ -37,7 +37,7 @@ test('rollout, signed App gate, and private workflow complete in order; token is
     if (url.endsWith('/statuses')) return response({id:5678},201);
     if (url.startsWith('https://api.render.com/')) return response({deploy:{id:'dep-synthetic'}});
     if (url.endsWith('/healthz')) return response({ok:true,sha,buildId:crypto.randomUUID(),builtAt:new Date(Date.now()+1000).toISOString()});
-    if (url.includes('/check-runs')) return response({check_runs:[{id:999,name:'StackSnack Release Gate',app:{id:5535068},started_at:new Date(Date.now()+1000).toISOString(),status:'completed',conclusion:'success',html_url:'https://github.com/synthetic'}]});
+    if (url.includes('/check-runs')) return response({check_runs:[{id:999,name:'StackSnack Release Gate',app:{id:5535068},external_id:crypto.createHash('sha256').update(['9a3d5ef5-84d1-4228-a275-3267581d4c28','1443487174','1234',sha].join(':')).digest('hex'),started_at:new Date(Date.now()+1000).toISOString(),status:'completed',conclusion:'success',html_url:'https://github.com/synthetic'}]});
     if (url.endsWith('/access_tokens')) return response({token:'synthetic-short-lived',permissions:{actions:'write'}});
     if (url.endsWith('/dispatches')) return response(null,204);
     if (url.includes('/actions/workflows/security.yml/runs?')) return response({workflow_runs:[{id:777,display_title:'Staging preview dep-synthetic',created_at:new Date(Date.now()+1000).toISOString(),status:'completed',conclusion:'success'}]});
