@@ -15,7 +15,7 @@ const server=http.createServer((req,res)=>{
     res.writeHead(404,{'content-type':'application/json'});return res.end('{"error":"not_found"}');
   }
   let name;try{name=decodeURIComponent(new URL(req.url,'http://fixture.invalid').pathname);}catch{res.writeHead(400);return res.end();}
-  if(name==='/healthz'){res.writeHead(200,{'content-type':'application/json'});return res.end('{"ok":true}');}
+  if(name==='/healthz'){res.writeHead(200,{'content-type':'application/json'});return res.end(JSON.stringify({ok:true,...JSON.parse(fs.readFileSync('build-info.json','utf8'))}));}
   if(name==='/')name='/index.html';
   const file=path.resolve(root,'.'+name);
   if(!file.startsWith(root+path.sep)){res.writeHead(404);return res.end();}

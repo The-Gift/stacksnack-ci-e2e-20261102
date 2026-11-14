@@ -1,0 +1,43 @@
+name: Deploy and verify staging preview
+on:
+  push:
+    branches: [preview]
+  workflow_dispatch:
+permissions:
+  contents: read
+  deployments: write
+  checks: read
+  pull-requests: read
+concurrency:
+  group: stacksnack-staging-preview
+  cancel-in-progress: false
+jobs:
+  deploy-and-verify:
+    if: ${{ github.repository == 'The-Gift/stacksnack-ci-e2e-20261102' && github.ref == 'refs/heads/preview' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 48
+    environment: stacksnack-staging-preview
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+      - name: Validate staging orchestration
+        run: node --test scripts/staging-preview.test.cjs
+      - name: Deploy, wait for the gate, and run the private Action
+        run: node scripts/staging-preview.cjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RENDER_STAGING_DEPLOY_HOOK: ${{ secrets.RENDER_STAGING_DEPLOY_HOOK }}
+          STAGING_DISPATCH_APP_ID: ${{ vars.STAGING_DISPATCH_APP_ID }}
+          STAGING_DISPATCH_INSTALLATION_ID: ${{ vars.STAGING_DISPATCH_INSTALLATION_ID }}
+          STAGING_DISPATCH_PRIVATE_KEY: ${{ secrets.STAGING_DISPATCH_PRIVATE_KEY }}
+      - name: Save deployment receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: staging-deployment-${{ github.run_id }}
+          path: staging-deployment-receipt.json
+          if-no-files-found: error
+          retention-days: 7
