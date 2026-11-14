@@ -17,3 +17,5 @@ fs.writeFileSync('public/api/otherTokens','[]');
 if(['leak','route-a','route-b'].includes(fixture.mode))fs.writeFileSync('public/api/'+(fixture.mode==='route-b'?'otherTokens':'sessionTokens'),JSON.stringify({fixtureOnly:true,key:['sk','live','SYNTHETICNOTVALID1234567890'].join('_')}));
 
 fs.copyFileSync('node_modules/jquery/dist/jquery.min.js','public/jquery.min.js');
+
+fs.writeFileSync('build-info.json',JSON.stringify({sha:process.env.RENDER_GIT_COMMIT||null,buildId:require('node:crypto').randomUUID(),builtAt:new Date().toISOString()}));
